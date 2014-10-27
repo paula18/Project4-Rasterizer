@@ -22,6 +22,9 @@ float* device_nbo;
 float* device_vboWindow; 
 triangle* primitives;
 
+int totalTime = 0; 
+int iterations = 0;
+
 void checkCUDAError(const char *msg) {
   cudaError_t err = cudaGetLastError();
   if( cudaSuccess != err) {
@@ -474,6 +477,15 @@ void cudaRasterizeCore(uchar4* PBOpos, glm::vec2 resolution, float frame, float*
   //------------------------------
   //rasterization
   //------------------------------
+	
+
+		
+	cudaEvent_t start,stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+	float time; 
+	cudaEventRecord(start, 0);
+
 #if(BACK_FACE_CULLING)
 	thrust::device_ptr<triangle> primitivesArray = thrust::device_pointer_cast(primitives);
 	int numberOfPrimitives = ceil((float)ibosize/3);
@@ -485,6 +497,23 @@ void cudaRasterizeCore(uchar4* PBOpos, glm::vec2 resolution, float frame, float*
 	rasterizationKernel<<<primitiveBlocks, tileSize>>>(primitives, ibosize/3, depthbuffer, resolution);
 
 #endif
+
+	cudaEventRecord(stop, 0); 
+	cudaEventSynchronize(stop); 
+
+	cudaEventElapsedTime(&time, start, stop); 
+
+	totalTime += time;
+
+	//std::cout << "Iterations: " << iterations << " Time: " << time <<  std::endl;
+
+	if (iterations == 100)
+	{
+		std::cout << "Iterations: " << iterations << " Time: " << time << " Average Time: " << totalTime / iterations << std::endl;
+	}
+	iterations++; 
+
+
 
   cudaDeviceSynchronize();
   //------------------------------

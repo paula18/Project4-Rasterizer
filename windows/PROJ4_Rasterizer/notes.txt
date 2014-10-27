@@ -1,0 +1,5 @@
+minimum divergence
+intialize kernel 
+clean up 
+block maximum of 512 threads
+unitilize therad 

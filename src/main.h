@@ -55,13 +55,12 @@ int ibosize;
 float* nbo; 
 int nbosize; 
 
+//-------------------------------
+//----------CAMERA STUFF-----------
+//-------------------------------
 int lastX, lastY;
-float xPos = 0, yPos = 0, zPos = 0; 
-float xRot = 0, yRot = 0;
-float deltaangle = 0; 
-int xOrigin  = -1;
 
-float eyeDistance = 1.0f;
+float eyeDistance = 5.0f;
 float head = 0.0f, pitch = 0.0f;
 glm::vec3 cameraPosition(0, 0, eyeDistance); 
 

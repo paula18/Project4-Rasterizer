@@ -69,7 +69,7 @@ The resulting colors are added to an ambient lighting that is calculated using t
 -------------------------------------------------------------------------------
 Rendering:
 -------------------------------------------------------------------------------
-In the rendering step takes care of sending the data from the depthbuffer to the framebuffer. I added anti-aliasing by supersampling each pixel. We look at the colors of the neighboring pixels and compute the average of these. 
+The rendering step takes care of sending the data from the depthbuffer to the framebuffer. I added anti-aliasing by supersampling each pixel. We look at the colors of the neighboring pixels and compute the average of these. 
 The picture below shows the difference between rendering with anti-aliasing and rendering without. As the picture shows, when we turn on anti-aliasing the lines look smoother and the "jumps" are not as visible. 
 
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/aliasingComparison.PNG)
@@ -78,7 +78,7 @@ The picture below shows the difference between rendering with anti-aliasing and 
 -------------------------------------------------------------------------------
 Color and Normal Interpolation:
 -------------------------------------------------------------------------------
-Color and normal interpolation is performed using baricentric coordinates. The next image each vertex of the triangle is assigned a different color (red, green and blue) and the interior of the triangle is interpolated. 
+Color and normal interpolation is performed using baricentric coordinates. In the following image each vertex of the triangle is assigned a different color (red, green and blue) and the interior of the triangle is interpolated. 
 
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/triColorInter.PNG)
 
@@ -107,7 +107,7 @@ PERFORMANCE EVALUATION
 -------------------------------------------------------------------------------
 Back Face Culling
 -------------------------------------------------------------------------------
-The way I implemented back face culling has not effect of the performance. Whether this feature is turned ON or OFF does not affect the rate of the rasterizer. I tested this feature on the bunny, the cow and the Buda. The FPS stay the same. 
+The way I implemented back face culling has not effect on the performance. Whether this feature is turned ON or OFF does not affect the rate of the rasterizer. I tested this feature on the bunny, the cow and the Buda. The FPS stay the same. 
 
 -------------------------------------------------------------------------------
 Anti-Aliasing
@@ -125,3 +125,4 @@ I also checked what impact the distance from the camera to the model has on the 
 VIDEO
 -------------------------------------------------------------------------------
 
+(https://vimeo.com/110116708 "CUDA Rasterizer Video")
