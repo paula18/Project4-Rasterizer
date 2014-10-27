@@ -19,6 +19,9 @@
 #include <string>
 #include <time.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtx/rotate_vector.hpp"
+
 
 #include "rasterizeKernels.h"
 #include "utilities.h"
@@ -49,6 +52,32 @@ float* cbo;
 int cbosize;
 int* ibo;
 int ibosize;
+float* nbo; 
+int nbosize; 
+
+int lastX, lastY;
+float xPos = 0, yPos = 0, zPos = 0; 
+float xRot = 0, yRot = 0;
+float deltaangle = 0; 
+int xOrigin  = -1;
+
+float eyeDistance = 1.0f;
+float head = 0.0f, pitch = 0.0f;
+glm::vec3 cameraPosition(0, 0, eyeDistance); 
+
+float upVectorY = glm::cos(glm::radians(head)) > 0.0f ? -1.0f : 1.0f; 
+glm::vec3 upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
+
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+
+float speed = 0.05f; 
+float sensitivity = 0.1f; 
+
+float fov = 30;     // The horizontal Field of View, in degrees : the amount of "zoom". 
+						//Think "camera lens". Usually between 90° (extra wide) and 30° (quite zoomed in)
+
+colorMode color = DIFFUSE; 
+aliasing aliasing = OFF; 
 
 //-------------------------------
 //----------CUDA STUFF-----------
@@ -85,6 +114,7 @@ void initTextures();
 void initVAO();
 GLuint initShader();
 
+
 //-------------------------------
 //---------CLEANUP STUFF---------
 //-------------------------------
@@ -99,5 +129,9 @@ void deleteTexture(GLuint* tex);
 void mainLoop();
 void errorCallback(int error, const char *description);
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+void mouseCallback(GLFWwindow* window, int key, int action, int mods);
+void mouseScroll(GLFWwindow* window,double x,double y);
+
+void turnCamera(float& m_pitch);
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "main.h"
 
+#define TURN_TABLE 1
 //-------------------------------
 //-------------MAIN--------------
 //-------------------------------
@@ -76,33 +77,64 @@ void mainLoop() {
 //---------RUNTIME STUFF---------
 //-------------------------------
 
-void runCuda(){
+void runCuda()
+{
   // Map OpenGL buffer object for writing from CUDA on a single GPU
   // No data is moved (Win & Linux). When mapped to CUDA, OpenGL should not use this buffer
-  dptr=NULL;
+	dptr=NULL;
 
-  vbo = mesh->getVBO();
-  vbosize = mesh->getVBOsize();
+	vbo = mesh->getVBO();
+	vbosize = mesh->getVBOsize();
 
-  float newcbo[] = {0.0, 1.0, 0.0, 
+	float newcbo[] = {0.0, 1.0, 0.0, 
                     0.0, 0.0, 1.0, 
                     1.0, 0.0, 0.0};
-  cbo = newcbo;
-  cbosize = 9;
+	cbo = mesh->getCBO();
+	cbosize = mesh->getCBOsize(); 
 
-  ibo = mesh->getIBO();
-  ibosize = mesh->getIBOsize();
+	ibo = mesh->getIBO();
+	ibosize = mesh->getIBOsize();
 
-  cudaGLMapBufferObject((void**)&dptr, pbo);
-  cudaRasterizeCore(dptr, glm::vec2(width, height), frame, vbo, vbosize, cbo, cbosize, ibo, ibosize);
-  cudaGLUnmapBufferObject(pbo);
+	nbo = mesh->getNBO();
+	nbosize = mesh->getNBOsize();
 
-  vbo = NULL;
-  cbo = NULL;
-  ibo = NULL;
+	glm::mat4 mModel(1.0f); 
 
-  frame++;
-  fpstracker++;
+
+#if (TURN_TABLE)
+	pitch = frame % 360;
+
+	float r_head = glm::radians(head), r_pitch = glm::radians(pitch);
+	cameraPosition.x = cameraTarget.x + eyeDistance * glm::cos(r_head) * glm::cos(r_pitch);
+	cameraPosition.y = cameraTarget.y + eyeDistance * glm::sin(r_head);
+	cameraPosition.z = cameraTarget.z + eyeDistance * glm::cos(r_head) * glm::sin(r_pitch);
+
+	//Change up vectr depending on model 
+	float upVectorY = glm::cos(r_head) > 0.0f ? -1.0f : -1.0f; 
+	upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
+#endif
+	glm::mat4 mView = glm::lookAt(cameraPosition, cameraTarget, upVector); 
+
+		
+	float aspectRatio = width / height;					// Aspect Ratio. Depends on the size of your window. 
+													//Notice that 4/3 == 800/600 == 1280/960, sounds familiar ?
+	float nearClippingPlane =  0.1f;        // Near clipping plane. Keep as big as possible, or you'll get precision issues.
+	float farClippingPlane = 100.0f;       // Far clipping plane. Keep as little as possible.
+
+	glm::mat4 mProj = glm::perspective(fov, aspectRatio, nearClippingPlane, farClippingPlane); 
+
+	cudaGLMapBufferObject((void**)&dptr, pbo);
+	cudaRasterizeCore(dptr, glm::vec2(width, height), frame, vbo, vbosize, cbo, cbosize, ibo, ibosize, nbo, nbosize,
+									mModel, mView, mProj, cameraPosition, color, aliasing);
+	cudaGLUnmapBufferObject(pbo);
+
+	vbo = NULL;
+	cbo = NULL;
+	ibo = NULL;
+	nbo = NULL; 
+
+	frame++;
+	fpstracker++;
 
 }
   
@@ -126,7 +158,9 @@ bool init(int argc, char* argv[]) {
   }
   glfwMakeContextCurrent(window);
   glfwSetKeyCallback(window, keyCallback);
-
+glfwSetMouseButtonCallback(window, mouseCallback);
+  glfwSetScrollCallback(window, mouseScroll);
+ 
   // Set up GL context
   glewExperimental = GL_TRUE;
   if(glewInit()!=GLEW_OK){
@@ -281,4 +315,112 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
+
+	else if(key == GLFW_KEY_D && action == GLFW_PRESS)
+		color = DIFFUSE;
+	
+	else if(key == GLFW_KEY_N && action == GLFW_PRESS)
+		color = NORMAL;
+	
+	else if(key == GLFW_KEY_S && action == GLFW_PRESS)
+		color = SPEC;
+	
+	else if(key == GLFW_KEY_C && action == GLFW_PRESS)
+		color = COLOR_INTER;
+	
+	else if(key == GLFW_KEY_B && action == GLFW_PRESS)
+		color = BACK_FACE_COLOR;
+
+	else if(key == GLFW_KEY_A && action == GLFW_PRESS)
+	{
+		if (aliasing == ON) aliasing = OFF; 
+		else aliasing = ON; 
+	}
+
+	
+}
+
+void mouseCallback(GLFWwindow* window, int key, int action, int mods)
+{
+
+	double mouseXPos, mouseYPos;    //Position in screen coordinates
+	glfwGetCursorPos (window, &mouseXPos, &mouseYPos);
+
+	float deltaX = float(mouseXPos - lastX); 
+	float deltaY = float(mouseYPos - lastY); 
+
+	float xWindow = ( deltaX + 1) * width * 0.5;
+	float yWindow = ( deltaY + 1 ) * height * 0.5;
+
+	if (key == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+	{
+	
+		head += deltaY * sensitivity;  
+		pitch += deltaX * sensitivity;  
+
+		if (head > 89.0f)
+			head = 89.0f; 
+		if (head < -89.0f) 
+			head = -89.0f; 
+	
+	}
+
+	else if (key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		float upVectorY = glm::cos(glm::radians(head)) > 0.0f ? -1.0f : 1.0f; 
+		upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
+		
+		glm::vec3 vdir(glm::normalize(cameraTarget -  cameraPosition));
+		glm::vec3 u(glm::normalize(glm::cross(vdir, upVector)));
+		glm::vec3 v(glm::normalize(glm::cross(u, vdir)));
+
+		glm::vec3 a =  0.01f * (deltaY * v - deltaX * u);
+		//cameraTarget += a;
+		//cameraPosition += a;
+	}
+	
+	float r_head = glm::radians(head), r_pitch = glm::radians(pitch);
+	cameraPosition.x = cameraTarget.x + eyeDistance * glm::cos(r_head) * glm::cos(r_pitch);
+	cameraPosition.y = cameraTarget.y + eyeDistance * glm::sin(r_head);
+	cameraPosition.z = cameraTarget.z + eyeDistance * glm::cos(r_head) * glm::sin(r_pitch);
+
+	//Change up vectr depending on model 
+	float upVectorY = glm::cos(r_head) > 0.0f ? -1.0f : -1.0f; 
+	upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
+	
+
+	
+	lastX = mouseXPos; 
+	lastY = mouseYPos; 
+
+
+}
+
+//Zoom in and Zoom out
+void mouseScroll(GLFWwindow* window,double x,double y)
+{
+	
+	eyeDistance += y * speed; 
+
+	if (eyeDistance < 0.1f)
+		eyeDistance = 0.1f; 
+	if (eyeDistance > 15.0f)
+		eyeDistance = 15.0f;
+
+	float r_head = glm::radians(head), r_pitch = glm::radians(pitch);
+	cameraPosition.x = cameraTarget.x + eyeDistance * glm::cos(r_head) * glm::cos(r_pitch);
+	cameraPosition.y = cameraTarget.y + eyeDistance * glm::sin(r_head);
+	cameraPosition.z = cameraTarget.z + eyeDistance * glm::cos(r_head) * glm::sin(r_pitch);
+
+	//Change up vectr depending on model 
+	float upVectorY = glm::cos(r_head) > 0.0f ? -1.0f : 1.0f; 
+	upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
+	
+
+
+}
+
+void turnCamera(float& m_pitch)
+{
+	pitch += 0.1 * sensitivity;  
 }
