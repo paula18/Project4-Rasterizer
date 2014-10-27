@@ -62,7 +62,7 @@ int nbosize;
 //-------------------------------
 int lastX, lastY;
 
-float eyeDistance = 1.5f;
+float eyeDistance = 10.0f;
 float head = 45.0f, pitch = 45.0f;
 glm::vec3 cameraPosition(0, 0, eyeDistance); 
 

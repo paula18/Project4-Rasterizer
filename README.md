@@ -135,7 +135,9 @@ Anti- aliasing has an effect on the performance as well. When this feature is tu
 -------------------------------------------------------------------------------
 Eye Distance
 -------------------------------------------------------------------------------
-I also checked what impact the distance from the camera to the model has on the performance. As I expected, the closer the object is to the camera, the slowest the performance. The parallelization is done by primitive (triangles in our case) and therefore the closer the triangles are to the viewing point more work is done per primitive and therefore the running speed decreases.  
+As I mentioned before, the distance from the model to the camera also has an effect on the performance as I expected. As I said, the parallelization is done by primitive, and therefore the closer the primitives is to the eye, the bigger it gets and more work is needed to render each triangle. I compared the effect of the eye distance with the model of the bunny. The results are shown in the graph below. As the image shows, as the distance gets larger, the performance stabilizes.
+
+![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceD.PNG)
 
 -------------------------------------------------------------------------------
 TO DO
