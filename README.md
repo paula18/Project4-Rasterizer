@@ -126,7 +126,7 @@ As mentioned before, back face culling was implemented using thrust stream compa
 -------------------------------------------------------------------------------
 Anti-Aliasing
 -------------------------------------------------------------------------------
-Anti- aliasing has an effect on the performance as well. When this feature is turned on, the runtime decreases by a small amount. This amount is more or less the same no matter how many faces each model has. This slowdown of the performance is due to the supersampling method I used to implement anti-aliasing. When we turn on this feature, each pixel looks at its neighbors to compute the average color, requiring more iterations and therefore decreasing the runtime speed. 
+Anti- aliasing has an effect on the performance as well. When this feature is turned on, the runtime decreases by a small amount. This slowdown of the performance is due to the supersampling method I used to implement anti-aliasing. When we turn on this feature, each pixel looks at its neighbors to compute the average color, requiring more iterations and therefore decreasing the runtime speed. 
 
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceA1.PNG)
 
