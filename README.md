@@ -94,6 +94,7 @@ Mouse and Keyboard Interaction:
 * S - Render with specular lighting.
 * C - View color interpolation. 
 * A - Turn on/off anti-aliasing
+* R - Reset Timer
 
 * Mouse wheel - zoom in/out
 * Mouse right button - rotate camera
@@ -103,26 +104,47 @@ Mouse and Keyboard Interaction:
 -------------------------------------------------------------------------------
 PERFORMANCE EVALUATION
 -------------------------------------------------------------------------------
+To analyze the performance of the algorithm all the models are place more or less at the same distance from the camera. As I mention later, the distance from the model to the camera position affects the runtime, therefore I tried to place all the object more or less at the same distance. However, here I am analyzing the performance when using anti-aliasing and back face culling. I am not making comparisons between models. 
+Faces per model: 
+
+* Triangle - 1 face
+* Cube - 12 faces
+* Bunny - 2503 faces
+* Cow - 4585 faces
+* Buda - 49990 faces
+* Dragon - 50000 faces
+
 
 -------------------------------------------------------------------------------
 Back Face Culling
 -------------------------------------------------------------------------------
-The way I implemented back face culling has not effect on the performance. Whether this feature is turned ON or OFF does not affect the rate of the rasterizer. I tested this feature on the bunny, the cow and the Buda. The FPS stay the same. 
+As mentioned before, back face culling was implemented using thrust stream compaction. When a face is pointing away from the camera, we mark it as not visible and therefore we do not draw it. As the graph below shows, back face culling has an effect on the performance. When this feature is turned off, and therefore we draw all the faces, the runtime slows down by a significant amount. More noticeable is this effect on models with a large number of triangles. With models of smaller number, such as the bunny, back face culling has less effect, but nevertheless, the feature is noticeable. In the cube, we can also see an important effect. In general, the rendering of the cube and the triangle take way longer than for more complex models. This is because we are parallelizing by primitive (triangle in this case) and the bigger the triangle, more work is done per primitive. The analysis for back face culling is performed with Anti-Aliasing OFF. 
 
+![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceBF1.PNG)
+
+![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceBF2.PNG)
 -------------------------------------------------------------------------------
 Anti-Aliasing
 -------------------------------------------------------------------------------
+Anti- aliasing has an effect on the performance as well. When this feature is turned on, the runtime decreases by a small amount. This amount is more or less the same no matter how many faces each model has. This slowdown of the performance is due to the supersampling method I used to implement anti-aliasing. When we turn on this feature, each pixel looks at its neighbors to compute the average color, requiring more iterations and therefore decreasing the runtime speed. 
 
-Anti-Aliasing affect the performance by a small amount. Even though the change in FPS is not very noticeable, we can see that when this feature is turned ON, the performance decreases. For instance, a render of the bunny with no anti-aliasing renders at 26 FPS, while turning this feature ON decreases it to 22 FPS.
+![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceA1.PNG)
+
+![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceA2.PNG)
 
 -------------------------------------------------------------------------------
 Eye Distance
 -------------------------------------------------------------------------------
 I also checked what impact the distance from the camera to the model has on the performance. As I expected, the closer the object is to the camera, the slowest the performance. The parallelization is done by primitive (triangles in our case) and therefore the closer the triangles are to the viewing point more work is done per primitive and therefore the running speed decreases.  
 
+-------------------------------------------------------------------------------
+TO DO
+-------------------------------------------------------------------------------
+First thing I would like to do is to optimize the algorithm. Right now the performance is not the greatest and there are optimizations I can include to make the algorithm faster. I would also like to 
+add more pipeline stages and incluse the stencil test and scissors test and see what effects these have on the speed. 
 
 -------------------------------------------------------------------------------
 VIDEO
 -------------------------------------------------------------------------------
 
-(https://vimeo.com/110116708 "CUDA Rasterizer Video")
+https://vimeo.com/110116708 

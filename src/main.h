@@ -35,6 +35,8 @@ int frame;
 int fpstracker;
 double seconds;
 int fps = 0;
+int totalTime = 0; 
+int iterations = 0;
 GLuint positionLocation = 0;
 GLuint texcoordsLocation = 1;
 const char *attributeLocations[] = { "Position", "Tex" };
@@ -60,8 +62,8 @@ int nbosize;
 //-------------------------------
 int lastX, lastY;
 
-float eyeDistance = 5.0f;
-float head = 0.0f, pitch = 0.0f;
+float eyeDistance = 1.5f;
+float head = 45.0f, pitch = 45.0f;
 glm::vec3 cameraPosition(0, 0, eyeDistance); 
 
 float upVectorY = glm::cos(glm::radians(head)) > 0.0f ? -1.0f : 1.0f; 

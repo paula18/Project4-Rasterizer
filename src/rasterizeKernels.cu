@@ -10,7 +10,7 @@
 #include "rasterizeKernels.h"
 #include "rasterizeTools.h"
 
-#define BACK_FACE_CULLING 1
+
 
 
 glm::vec3* framebuffer;
@@ -21,9 +21,6 @@ int* device_ibo;
 float* device_nbo;
 float* device_vboWindow; 
 triangle* primitives;
-
-int totalTime = 0; 
-int iterations = 0;
 
 void checkCUDAError(const char *msg) {
   cudaError_t err = cudaGetLastError();
@@ -220,7 +217,7 @@ __global__ void primitiveAssemblyKernel(float* vbo, int vbosize, float* cbo, int
 			primitives[index].c1 = glm::vec3(0.0f, 1.0f, 0.0f);
 			primitives[index].c2 = glm::vec3(0.0f, 0.0f, 1.0f);
 			break;
-		case 4:
+	/*	case 4:
 			if (primitives[index].draw == true)
 			{
 				primitives[index].c0 = glm::vec3(1.0f, 0.0, 0.0); 
@@ -234,7 +231,7 @@ __global__ void primitiveAssemblyKernel(float* vbo, int vbosize, float* cbo, int
 				primitives[index].c2 = glm::vec3(1.0f, 0.0, 1.0f);
 				primitives[index].draw = true;
 			}
-			break;
+			break;*/
 		default:
 			primitives[index].c0 = glm::vec3(cbo[3 * id0], cbo[3 * id0 + 1], cbo[3 * id0 + 2]); 
 			primitives[index].c1 = glm::vec3(cbo[3 * id1], cbo[3 * id1 + 1], cbo[3 * id1 + 2]);
@@ -370,11 +367,12 @@ __global__ void render(glm::vec2 resolution, fragment* depthbuffer, glm::vec3* f
 	{
 		if (aliasing == ON)
 		{
+			float a = 1;
 			glm::vec3 value = glm::vec3(0.0f);
 			int num = 0; 
-			for(int i = -1; i <= 1; ++i)
+			for(int i = -a; i <= a; ++i)
 			{
-				for(int j = -1; j <= 1; ++j)
+				for(int j = -a; j <= a; ++j)
 				{
 					int xvalue = x + i; 
 					int yvalue = y + j;
@@ -479,13 +477,6 @@ void cudaRasterizeCore(uchar4* PBOpos, glm::vec2 resolution, float frame, float*
   //------------------------------
 	
 
-		
-	cudaEvent_t start,stop;
-	cudaEventCreate(&start);
-	cudaEventCreate(&stop);
-	float time; 
-	cudaEventRecord(start, 0);
-
 #if(BACK_FACE_CULLING)
 	thrust::device_ptr<triangle> primitivesArray = thrust::device_pointer_cast(primitives);
 	int numberOfPrimitives = ceil((float)ibosize/3);
@@ -498,23 +489,7 @@ void cudaRasterizeCore(uchar4* PBOpos, glm::vec2 resolution, float frame, float*
 
 #endif
 
-	cudaEventRecord(stop, 0); 
-	cudaEventSynchronize(stop); 
-
-	cudaEventElapsedTime(&time, start, stop); 
-
-	totalTime += time;
-
-	//std::cout << "Iterations: " << iterations << " Time: " << time <<  std::endl;
-
-	if (iterations == 100)
-	{
-		std::cout << "Iterations: " << iterations << " Time: " << time << " Average Time: " << totalTime / iterations << std::endl;
-	}
-	iterations++; 
-
-
-
+	
   cudaDeviceSynchronize();
   //------------------------------
   //fragment shader

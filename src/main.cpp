@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-#define TURN_TABLE 1
+#define TURN_TABLE 0
 //-------------------------------
 //-------------MAIN--------------
 //-------------------------------
@@ -81,7 +81,12 @@ void runCuda()
 {
   // Map OpenGL buffer object for writing from CUDA on a single GPU
   // No data is moved (Win & Linux). When mapped to CUDA, OpenGL should not use this buffer
-
+	
+	cudaEvent_t start,stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+	float time; 
+	cudaEventRecord(start, 0);
 	
 	
 	dptr=NULL;
@@ -138,6 +143,21 @@ void runCuda()
 
 	frame++;
 	fpstracker++;
+
+	cudaEventRecord(stop, 0); 
+	cudaEventSynchronize(stop); 
+
+	cudaEventElapsedTime(&time, start, stop); 
+
+	totalTime += time;
+
+	std::cout << "Iterations: " << iterations << " Time: " << time << std::endl;
+
+	if (iterations == 100)
+	{
+		std::cout << "Iterations: " << iterations << " Time: " << time << " Average Time: " << totalTime / iterations << std::endl;
+	}
+	iterations++; 
 
 }
   
@@ -338,6 +358,11 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	{
 		if (aliasing == ON) aliasing = OFF; 
 		else aliasing = ON; 
+	}
+	else if(key == GLFW_KEY_R && action == GLFW_PRESS)
+	{
+		iterations = 0; 
+		totalTime = 0; 
 	}
 
 	
