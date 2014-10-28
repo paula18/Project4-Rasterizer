@@ -305,7 +305,7 @@ __global__ void fragmentShadeKernel(fragment* depthbuffer, glm::vec2 resolution,
 		//glm::vec3 lightColor = glm::vec3(0.4f, 0.6f, 0.8f); 
 		//BUNNY 
 		//glm::vec3 lightPos = glm::vec3 (4.0f, 12.0f, 3.0f); 
-		///glm::vec3 lightColor = glm::vec3(0.5, 0.7, 0.8); 
+		//glm::vec3 lightColor = glm::vec3(0.5, 0.7, 0.8); 
 		//glm::vec3 lightColor = glm::vec3(0.5*glm::abs(f.normal.x), 0.7*glm::abs(f.normal.y), 0.2*glm::abs(f.normal.z)); 
 		//BUDDA
 		//glm::vec3 lightPos = glm::vec3 (0.0f, 0.0f, 10.0f);
@@ -314,6 +314,9 @@ __global__ void fragmentShadeKernel(fragment* depthbuffer, glm::vec2 resolution,
 		//DRAGON 
 		glm::vec3 lightPos = glm::vec3 (0.0f, 0.0f, 10.0f);
 		glm::vec3 lightColor = glm::vec3 (f.normal);
+		//Teapot
+		//glm::vec3 lightColor = glm::vec3(f.normal); 
+		//glm::vec3 lightPos = glm::vec3 (20.0f, 5.0f, 20.0f);
 
 
 		glm::vec3 lightDir = glm::normalize(lightPos - f.position);

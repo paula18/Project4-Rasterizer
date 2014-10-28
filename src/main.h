@@ -63,8 +63,8 @@ int nbosize;
 int lastX, lastY;
 
 float eyeDistance = 10.0f;
-float head = 45.0f, pitch = 45.0f;
-glm::vec3 cameraPosition(0, 0, eyeDistance); 
+float head = 180.0f, pitch = 0.0f;
+glm::vec3 cameraPosition; 
 
 float upVectorY = glm::cos(glm::radians(head)) > 0.0f ? -1.0f : 1.0f; 
 glm::vec3 upVector = glm::vec3(0.0f, upVectorY, 0.0f); 

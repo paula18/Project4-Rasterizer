@@ -104,7 +104,7 @@ Mouse and Keyboard Interaction:
 -------------------------------------------------------------------------------
 PERFORMANCE EVALUATION
 -------------------------------------------------------------------------------
-To analyze the performance of the algorithm all the models are place more or less at the same distance from the camera. As I mention later, the distance from the model to the camera position affects the runtime, therefore I tried to place all the object more or less at the same distance. However, here I am analyzing the performance when using anti-aliasing and back face culling. I am not making comparisons between models. 
+To analyze the performance of the algorithm all the models are place more or less at the same distance from the camera. The distance from the model to the camera position affects the runtime a bit, therefore I tried to place all the object more or less at the same distance. However, here I am analyzing the performance when using anti-aliasing and back face culling. I am not making comparisons between models. 
 Faces per model: 
 
 * Triangle - 1 face
@@ -118,8 +118,7 @@ Faces per model:
 -------------------------------------------------------------------------------
 Back Face Culling
 -------------------------------------------------------------------------------
-As mentioned before, back face culling was implemented using thrust stream compaction. When a face is pointing away from the camera, we mark it as not visible and therefore we do not draw it. As the graph below shows, back face culling has an effect on the performance. When this feature is turned off, and therefore we draw all the faces, the runtime slows down by a significant amount. More noticeable is this effect on models with a large number of triangles. With models of smaller number, such as the bunny, back face culling has less effect, but nevertheless, the feature is noticeable. In the cube, we can also see an important effect. In general, the rendering of the cube and the triangle take way longer than for more complex models. This is because we are parallelizing by primitive (triangle in this case) and the bigger the triangle, more work is done per primitive. The analysis for back face culling is performed with Anti-Aliasing OFF. 
-
+As mentioned before, back face culling was implemented using thrust stream compaction. When a face is pointing away from the camera, we mark it as not visible and therefore we do not draw it. As the graph below shows, when this feature is turned off, and therefore we draw all the faces, the runtime slows down by some amount in some models; the ones with a great number of faces (dragon and buda models). With models of smaller number, such as the bunny, back face culling has no effect. It is also worth noticing that the rendering of the cube (and the triangle, even if it is not shown in the graph) take way longer than for more complex models. This is because we are parallelizing by primitive (triangle in this case) and the bigger the triangle, more work is done per primitive. The analysis for back face culling is performed with Anti-Aliasing OFF.
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceBF1.PNG)
 
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceBF2.PNG)
@@ -133,17 +132,9 @@ Anti- aliasing has an effect on the performance as well. When this feature is tu
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceA2.PNG)
 
 -------------------------------------------------------------------------------
-Eye Distance
--------------------------------------------------------------------------------
-As I mentioned before, the distance from the model to the camera also has an effect on the performance as I expected. As I said, the parallelization is done by primitive, and therefore the closer the primitives is to the eye, the bigger it gets and more work is needed to render each triangle. I compared the effect of the eye distance with the model of the bunny. The results are shown in the graph below. As the image shows, as the distance gets larger, the performance stabilizes.
-
-![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceD.PNG)
-
--------------------------------------------------------------------------------
 TO DO
 -------------------------------------------------------------------------------
-First thing I would like to do is to optimize the algorithm. Right now the performance is not the greatest and there are optimizations I can include to make the algorithm faster. I would also like to 
-add more pipeline stages and incluse the stencil test and scissors test and see what effects these have on the speed. 
+I also like to add more pipeline stages and include the stencil test and scissors test and see what effects these have on the speed. Also, it would be nice to have some textures added. 
 
 -------------------------------------------------------------------------------
 VIDEO

@@ -110,17 +110,20 @@ void runCuda()
 
 
 #if (TURN_TABLE)
+	//head = frame % 360;
 	pitch = frame % 360;
-
+#endif
 	float r_head = glm::radians(head), r_pitch = glm::radians(pitch);
 	cameraPosition.x = cameraTarget.x + eyeDistance * glm::cos(r_head) * glm::cos(r_pitch);
 	cameraPosition.y = cameraTarget.y + eyeDistance * glm::sin(r_head);
 	cameraPosition.z = cameraTarget.z + eyeDistance * glm::cos(r_head) * glm::sin(r_pitch);
 
+
 	//Change up vectr depending on model 
 	float upVectorY = glm::cos(r_head) > 0.0f ? -1.0f : -1.0f; 
 	upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
-#endif
+
+	
 	glm::mat4 mView = glm::lookAt(cameraPosition, cameraTarget, upVector); 
 
 		
@@ -407,15 +410,6 @@ void mouseCallback(GLFWwindow* window, int key, int action, int mods)
 		//cameraPosition += a;
 	}
 	
-	float r_head = glm::radians(head), r_pitch = glm::radians(pitch);
-	cameraPosition.x = cameraTarget.x + eyeDistance * glm::cos(r_head) * glm::cos(r_pitch);
-	cameraPosition.y = cameraTarget.y + eyeDistance * glm::sin(r_head);
-	cameraPosition.z = cameraTarget.z + eyeDistance * glm::cos(r_head) * glm::sin(r_pitch);
-
-	//Change up vectr depending on model 
-	float upVectorY = glm::cos(r_head) > 0.0f ? -1.0f : -1.0f; 
-	upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
-	
 
 	
 	lastX = mouseXPos; 
@@ -430,25 +424,5 @@ void mouseScroll(GLFWwindow* window,double x,double y)
 	
 	eyeDistance += y * speed; 
 
-	if (eyeDistance < 0.1f)
-		eyeDistance = 0.1f; 
-	if (eyeDistance > 15.0f)
-		eyeDistance = 15.0f;
 
-	float r_head = glm::radians(head), r_pitch = glm::radians(pitch);
-	cameraPosition.x = cameraTarget.x + eyeDistance * glm::cos(r_head) * glm::cos(r_pitch);
-	cameraPosition.y = cameraTarget.y + eyeDistance * glm::sin(r_head);
-	cameraPosition.z = cameraTarget.z + eyeDistance * glm::cos(r_head) * glm::sin(r_pitch);
-
-	//Change up vectr depending on model 
-	float upVectorY = glm::cos(r_head) > 0.0f ? -1.0f : 1.0f; 
-	upVector = glm::vec3(0.0f, upVectorY, 0.0f); 
-	
-
-
-}
-
-void turnCamera(float& m_pitch)
-{
-	pitch += 0.1 * sensitivity;  
 }
