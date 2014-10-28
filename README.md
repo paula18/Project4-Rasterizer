@@ -121,7 +121,6 @@ Back Face Culling
 As mentioned before, back face culling was implemented using thrust stream compaction. When a face is pointing away from the camera, we mark it as not visible and therefore we do not draw it. As the graph below shows, when this feature is turned off, and therefore we draw all the faces, the runtime slows down by some amount in some models; the ones with a great number of faces (dragon and buda models). With models of smaller number, such as the bunny, back face culling has no effect. It is also worth noticing that the rendering of the cube (and the triangle, even if it is not shown in the graph) take way longer than for more complex models. This is because we are parallelizing by primitive (triangle in this case) and the bigger the triangle, more work is done per primitive. The analysis for back face culling is performed with Anti-Aliasing OFF.
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceBF1.PNG)
 
-![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceBF2.PNG)
 -------------------------------------------------------------------------------
 Anti-Aliasing
 -------------------------------------------------------------------------------
@@ -129,7 +128,6 @@ Anti- aliasing has an effect on the performance as well. When this feature is tu
 
 ![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceA1.PNG)
 
-![alt tag](https://github.com/paula18/Project4-Rasterizer/blob/master/performanceA2.PNG)
 
 -------------------------------------------------------------------------------
 TO DO
@@ -140,4 +138,4 @@ I also like to add more pipeline stages and include the stencil test and scissor
 VIDEO
 -------------------------------------------------------------------------------
 
-https://vimeo.com/110116708 
+https://vimeo.com/110212776
